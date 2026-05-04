@@ -1,8 +1,12 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import random
+import os
 
 app = Flask(__name__)
+CORS(app)
 
+# stok hadiah (1x per produk)
 stock = {
     "HG": 1,
     "PRIME": 1,
@@ -12,13 +16,16 @@ stock = {
 def get_reward():
     pool = []
 
+    # hadiah utama kalau masih ada
     for k, v in stock.items():
         if v > 0:
             pool.append(k)
 
+    # kalau semua habis
     if len(pool) == 0:
         return "HABIS"
 
+    # zonk & bonus
     pool += ["ZONK"] * 70
     pool += ["BONUS"] * 20
 
@@ -43,4 +50,5 @@ def spin():
     })
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+    port = int(os.environ.get("PORT", 3000))
+    app.run(host="0.0.0.0", port=port)
